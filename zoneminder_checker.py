@@ -41,8 +41,6 @@ rowcount = ''
 now = datetime.now().timestamp()
 alarmResendWaitTime = int(now) - 60 * 60 * 8
 
-times = []
-
 def utc_to_local(utc_dt):
     return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
 
