@@ -1,4 +1,3 @@
-import smtplib
 from datetime import timedelta, datetime, timezone
 import time
 import os.path
