@@ -39,8 +39,6 @@ results = ''
 rowcount = ''
 
 now = datetime.now().timestamp()
-hourago = int(now)- 60 * 60
-#hourago = int(now)
 alarmResendWaitTime = int(now) - 60 * 60 * 8
 
 times = []
