@@ -75,7 +75,7 @@ def checkDatabase():
     
     cursor = mydb.cursor()
     cursor.execute("""SELECT 
-        m.ID
+        m.ID,m.Name
     FROM
         Monitors m
             LEFT OUTER JOIN
@@ -125,7 +125,7 @@ if __name__ == "__main__":
         ready = sendagain();
 
         if ready == 1:
-            text = "The following Zoneminder monitor(s) are not working." 
+            text = "The following Zoneminder monitor(s) are not working.\n\n" 
             text += "Monitor: %s" % monitors
             subject = "Zoneminder Monitor Problem!"
             print(text)
