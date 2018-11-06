@@ -38,7 +38,7 @@ results = ''
 rowcount = ''
 
 now = datetime.now().timestamp()
-alarmResendWaitTime = int(now) - 60 * 60 * 8
+alarmResendWaitTime = int(now) - 60 * 60 * 24  # 24 hours
 
 def utc_to_local(utc_dt):
     return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
@@ -75,14 +75,18 @@ def checkDatabase():
     
     cursor = mydb.cursor()
     cursor.execute("""SELECT 
-        m.ID,m.Name
+        m.ID, m.Name,g.NAME
     FROM
         Monitors m
+        LEFT OUTER JOIN 
+			Groups_Monitors gm ON gm.MonitorId = m.ID
+		LEFT OUTER JOIN 
+			Groups g ON g.ID = gm.GroupId 
             LEFT OUTER JOIN
-        Events e ON e.MonitorID = m.ID AND e.StartTime  > NOW() - INTERVAL 1 DAY
+        Events e ON (e.MonitorID = m.ID AND e.StartTime  > NOW() - INTERVAL g.NAME HOUR)        
     WHERE
         m.ENABLED = 1 AND m.FUNCTION = 'Modect'
-            AND e.ID IS NULL""")
+            AND e.ID IS NULL AND g.ParentId IS NOT NULL""")
 
     result = cursor.fetchall()
     if not cursor.rowcount:
@@ -97,7 +101,6 @@ def checkDatabase():
     
 if __name__ == "__main__":
     app_log.info("Started Program")
-    subject = "BDFD TwoToneDetect "
     try:
         results = checkDatabase()
     except:
