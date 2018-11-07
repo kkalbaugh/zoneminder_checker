@@ -1,22 +1,32 @@
 import smtplib
-from email.MIMEMultipart import MIMEMultipart
-from email.MIMEText import MIMEText
- 
-def sendsmtpemail(text,subject):
-  fromaddr = "YOUR ADDRESS"
-  toaddr = "ADDRESS YOU WANT TO SEND TO"
-  msg = MIMEMultipart()
-  msg['From'] = fromaddr
-  msg['To'] = toaddr
+import config
+import logging
+
+# Import the email modules we'll need
+from email.mime.text import MIMEText
+
+logger = logging.getLogger('zmchecker.smtp')
+
+def sendemail(text,subject):
+  msg = MIMEText(text)
+  msg['From'] = config.email_from
+  msg['To'] = config.email_to
   msg['Subject'] = subject
 
-  body = text
-  msg.attach(MIMEText(body, 'plain'))
+  try:
+    if config.smtp_password == 587:
+        server = smtplib.SMTP(config.smtp_server, config.smtp_port)
+        server.starttls()
+    else:
+        server = smtplib.SMTP(config.smtp_server)
 
-  server = smtplib.SMTP('smtp.gmail.com', 587)
-  server.starttls()
-  server.login(fromaddr, "YOUR PASSWORD")
-  text = msg.as_string()
-  server.sendmail(fromaddr, toaddr, text)
-  server.quit()
-  print("Email Sent!)
+    if config.smtp_password != "":
+        server.login(config.email_login, config.smtp_password)
+
+    server.send_message(msg)
+    server.quit()
+    print("Email Sent! %s" % text)
+    logger.info("Sent email %s" % text)
+
+  except:
+    logger.error("Couldn't send email %s" % msg)
