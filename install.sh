@@ -5,7 +5,7 @@
 	python3 -m pip install boto3
 	if [ ! -d /usr/share/zm_checker ];
 	then
-		echo "Creating directory";
+		echo "Creating zh_checker directory";
 		mkdir /usr/share/zm_checker
 		echo "Copying files over";
 		cp -R *.py /usr/share/zm_checker/*
@@ -14,7 +14,14 @@
 		#cp -R *.py!(config.py) /usr/share/zm_checker/
 		rsync -v --exclude='config.py' *.py /usr/share/zm_checker/
 	fi		
-	
+	if [ ! -d /var/local/zm_checker/ ];
+	then
+		echo "Creating lastseen directory";
+		mkdir /var/local/zm_checker/
+		touch /var/local/zm_checker/lastsent
+		chmod 755 /var/local/zm_checker/lastsent
+	fi
+		
 	chown root:root -R /usr/share/zm_checker/*
 	chmod 755 -R /usr/share/zm_checker/*
 
