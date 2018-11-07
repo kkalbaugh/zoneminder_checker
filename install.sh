@@ -18,6 +18,6 @@
 	chown root:root -R /usr/share/zm_checker/*
 	chmod 755 -R /usr/share/zm_checker/*
 
-	echo '*/30 * * * * /usr/bin/python3 /usr/share/zm_checker/zoneminder_checker.py &' > /etc/cron.d/zoneminder_checker.cron
-	echo "Added zoneminder_checker.py to /etc/cron.d/zoneminder_checker.cron"
+	echo '*/30 * * * * /usr/bin/python3 /usr/share/zm_checker/zoneminder_checker.py &' > /etc/cron.d/zoneminder_checker
+	echo "Added zoneminder_checker.py to /etc/cron.d/zoneminder_checker"
 }
