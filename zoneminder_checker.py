@@ -78,7 +78,7 @@ def sendagain():
             logger.error("Unable to open %s" % lastsentfile)
 
 def checkDatabase():
-    global cursor    
+    global cursor
     global monitor_list
 
     cursor.execute("""SELECT
@@ -101,10 +101,10 @@ def checkDatabase():
         logger.debug("No monitors in alarm")
         return 0
     else:
-        for x in result:            
-            monitor_list += "Monitor #%s (%s) - Last Event Was %s\n\n" % (x[0],x[1],getLastEvent(x[0]))            
+        for x in result:
+            monitor_list += "Monitor #%s (%s) - Last Event Was %s\n\n" % (x[0],x[1],getLastEvent(x[0]))
         print("Monitors listed in alarm:\n\n%s" % monitor_list)
-        logger.info("Monitors listed in alarm: %s" % monitor_list)        
+        logger.info("Monitors listed in alarm: %s" % monitor_list)
         return 1
 
 def getLastEvent(monitor):
@@ -121,62 +121,62 @@ def getLastEvent(monitor):
     try:
         for (StartTime) in cursor:
             lastevent = datetime.strftime(StartTime[0], "%Y-%m-%d %I:%M:%S %p")
-            logger.info("Last Event Found for %s was at %s" % (monitor, lastevent))                    
+            logger.info("Last Event Found for %s was at %s" % (monitor, lastevent))
             print(lastevent)
             return lastevent
     except:
         print("No Prior Event Found")
         logger.info("No Prior Event Found for  %s" % monitor)
         return "No Prior Event Found"
-        
+
 
 if __name__ == "__main__":
     logger.info("Started Program")
-	if not os.path.isfile(lastsentfile):
-		ts = open(lastsentfile, 'w')
+    if not os.path.isfile(lastsentfile):
+        ts = open(lastsentfile, 'w')
         ts.write("0")
         ts.close()
-	else:
-		try:
-			results = checkDatabase()
-		except Exception as e:
-			logger.error("Exception occurred", exc_info=True)
-		except:
-			logger.error("Couldn't Open Database")
+    else:
+        try:
+            results = checkDatabase()
+        except Exception as e:
+            logger.error("Exception occurred", exc_info=True)
+        except:
+            logger.error("Couldn't Open Database")
 
-		try:
-			if results == 0:
-				print("Status is OK")
-				ready = sendagain();
-				if ready > 2:
-					text = "Zoneminder Monitor(s) Are Working Again!"
-					subject = "Zoneminder - All Monitors Back Online"
-					print(text)
-					email.sendemail(text,subject)
-					ts = open(lastsentfile, 'w')
-					ts.write("0")
-					ts.close()
-				else:
-					print("Not ready to send")
+        try:
+            if results == 0:
+                print("Status is OK")
+                ready = sendagain();
+                if ready > 2:
+                    text = "Zoneminder Monitor(s) Are Working Again!"
+                    subject = "Zoneminder - All Monitors Back Online"
+                    print(text)
+                    email.sendemail(text,subject)
+                    ts = open(lastsentfile, 'w')
+                    ts.write("0")
+                    ts.close()
+                else:
+                    print("Not ready to send")
 
-			else:
-				print("Status is NOT Ok")
-				logger.info("Status is NOT Ok")
-				ready = sendagain();
-				if ready == 1:
-					text = "The following Zoneminder monitor(s) are not working.\n\n"
-					text += monitor_list
-					subject = "Zoneminder - Monitor Problem!"
-					print(text)
-					email.sendemail(text,subject)
-					ts = open(lastsentfile, 'w')
-					ts.write(str(int(now)))
-					ts.close()
-				else:
-					print("Not ready to send.  Sent Already")
-					logger.info("Not ready to send.  Sent Already")
+            else:
+                print("Status is NOT Ok")
+                logger.info("Status is NOT Ok")
+                ready = sendagain();
+                if ready == 1:
+                    text = "The following Zoneminder monitor(s) are not working.\n\n"
+                    text += monitor_list
+                    subject = "Zoneminder - Monitor Problem!"
+                    print(text)
+                    email.sendemail(text,subject)
+                    ts = open(lastsentfile, 'w')
+                    ts.write(str(int(now)))
+                    ts.close()
+                else:
+                    print("Not ready to send.  Sent Already")
+                    logger.info("Not ready to send.  Sent Already")
 
-		except Exception as e:
-			logger.error("Exception occurred", exc_info=True)
+        except Exception as e:
+            logger.error("Exception occurred", exc_info=True)
 
     exit()
