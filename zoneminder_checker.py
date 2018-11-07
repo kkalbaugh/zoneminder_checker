@@ -19,7 +19,7 @@ except:
     logLevel = 'DEBUG'
 
 logFile = '/var/log/zm/zm_checker.log'
-lastsentfile = 'lastsent.txt'
+lastsentfile = '/var/local/zm/lastsent.txt'
 
 # Create Logging Object
 logger = logging.getLogger('zmchecker')
