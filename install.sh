@@ -8,7 +8,7 @@
 		echo "Creating zh_checker directory";
 		mkdir /usr/share/zm_checker
 		echo "Copying files over";
-		cp -R *.py /usr/share/zm_checker/*
+		rsync -v *.py /usr/share/zm_checker/
 	else
 		echo "Copying files over";
 		#cp -R *.py!(config.py) /usr/share/zm_checker/
@@ -22,8 +22,8 @@
 		chmod 755 /var/local/zm_checker/lastsent
 	fi
 		
-	chown root:root -R /usr/share/zm_checker/*
-	chmod 755 -R /usr/share/zm_checker/*
+	chown root:root -R /usr/share/zm_checker
+	chmod 755 -R /usr/share/zm_checker
 
 	echo '*/30 * * * * root /usr/bin/python3 /usr/share/zm_checker/zoneminder_checker.py &' > /etc/cron.d/zoneminder_checker
 	echo "Added zoneminder_checker.py to /etc/cron.d/zoneminder_checker"
