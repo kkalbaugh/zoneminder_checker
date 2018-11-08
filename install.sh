@@ -5,7 +5,9 @@
 	echo Error: This script requires root access
 	exit 1
 	fi
+	apt install python3-dev libpython3-dev
 	apt-get install python3-pip
+	apt install python3-mysqldb
 	python3 -m pip install mysql-connector
 	python3 -m pip install smtplib
 	python3 -m pip install boto3
