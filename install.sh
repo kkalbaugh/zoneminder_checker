@@ -16,7 +16,7 @@
 	fi		
 	if [ ! -d /var/local/zm_checker/ ];
 	then
-		echo "Creating lastseen directory";
+		echo "Creating lastsent directory";
 		mkdir /var/local/zm_checker/
 		touch /var/local/zm_checker/lastsent
 		chmod 777 /var/local/zm_checker/lastsent
