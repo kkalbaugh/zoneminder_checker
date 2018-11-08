@@ -1,5 +1,10 @@
 #!/bin/bash
 {
+	echo "--- Checking for root privileges..."
+	if [ "`whoami`" != "root" ]; then
+	echo Error: This script requires root access
+	exit 1
+	fi
 	apt-get install python3-pip
 	python3 -m pip install mysql-connector
 	python3 -m pip install smtplib
