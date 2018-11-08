@@ -18,9 +18,6 @@ try:
 except:
     logLevel = 'DEBUG'
 
-logFile = '/var/log/zm/zm_checker.log'
-lastsentfile = '/var/local/zm_checker/lastsent'
-
 # Create Logging Object
 logger = logging.getLogger('zmchecker')
 log_level = logging.getLevelName(logLevel)
@@ -28,7 +25,7 @@ logger.setLevel(log_level)
 
 # Setup Logging Handlers & Level
 log_formatter = logging.Formatter('%(asctime)s %(levelname)s %(funcName)s(%(lineno)d) %(message)s')
-ttd_handler = RotatingFileHandler(logFile, mode='a', maxBytes=5*1024*1024,backupCount=2, encoding=None, delay=0)
+ttd_handler = RotatingFileHandler(config.logFile, mode='a', maxBytes=5*1024*1024,backupCount=2, encoding=None, delay=0)
 ttd_handler.setFormatter(log_formatter)
 
 logger.addHandler(ttd_handler)
@@ -53,29 +50,32 @@ def utc_to_local(utc_dt):
     return utc_dt.replace(tzinfo=timezone.utc).astimezone(tz=None)
 
 def sendagain():
-    if not os.path.isfile(lastsentfile):
+    if not os.path.isfile(config.lastsentfile):
         print("Need to create file")
-        logger.info("%s doesn't exist.  Need to create file" % lastsentfile)
+        logger.info("%s doesn't exist.  Need to create file" % config.lastsentfile)
         return 1
     else:
         try:
-            with open(lastsentfile) as fp:
+            with open(config.lastsentfile) as fp:
                 line = fp.readline()
                 lastEmailSent = int(line)
                 fp.close()
-                if lastEmailSent > alarmResendWaitTime:
-                    print("Already sent less than %s hours ago" % config.email_resend)
-                    lastsend_obj = datetime.fromtimestamp(int(line))
-                    lastsend_str = lastsend_obj.strftime("%Y-%m-%d %I:%M:%S %p")
-                    return lastEmailSent
-                elif lastEmailSent == 0:
-                    print("Zoneminder Wasn't In Alarm")
-                    return 1
-                else:
-                    print("Ready to send again")
-                    return 1
         except:
-            logger.error("Unable to open %s" % lastsentfile)
+            logger.error("Unable to open %s" % config.lastsentfile)
+        if lastEmailSent > alarmResendWaitTime:
+            print("Already sent less than %s hours ago" % config.email_resend)
+            logger.info("Already sent less than %s hours ago" % config.email_resend)
+            lastsend_obj = datetime.fromtimestamp(int(line))
+            lastsend_str = lastsend_obj.strftime("%Y-%m-%d %I:%M:%S %p")
+            return lastEmailSent
+        elif lastEmailSent == 0:
+            print("Zoneminder Wasn't In Alarm")
+            logger.debug("Zoneminder Wasn't In Alarm")
+            return 1
+        else:
+            print("Ready to send again")
+            logger.info("Ready to Send Again")
+            return 1
 
 def checkDatabase():
     global cursor
@@ -132,10 +132,15 @@ def getLastEvent(monitor):
 
 if __name__ == "__main__":
     logger.info("Started Program")
-    if not os.path.isfile(lastsentfile):
-        ts = open(lastsentfile, 'w')
-        ts.write("0")
-        ts.close()
+    if not os.path.isfile(config.lastsentfile):
+        logger.error("Last Sent Tracking File %s doesn't exist." % config.lastsentfile)
+        try:
+            ts = open(config.lastsentfile, 'w')
+            ts.write("0")
+            ts.close()
+        except:
+            logger.error("Error creating %s" % config.lastsentfile,exc_info=True)
+            email.sendemail("Last Sent Tracking File Doesn't Exist and Couldn't Be Created" ,"ZMChecker Error")
     else:
         try:
             results = checkDatabase()
@@ -147,13 +152,13 @@ if __name__ == "__main__":
         try:
             if results == 0:
                 print("Status is OK")
-                ready = sendagain();
+                ready = sendagain();				
                 if ready > 2:
                     text = "Zoneminder Monitor(s) Are Working Again!"
                     subject = "Zoneminder - All Monitors Back Online"
                     print(text)
                     email.sendemail(text,subject)
-                    ts = open(lastsentfile, 'w')
+                    ts = open(config.lastsentfile, 'w')
                     ts.write("0")
                     ts.close()
                 else:
@@ -169,7 +174,7 @@ if __name__ == "__main__":
                     subject = "Zoneminder - Monitor Problem!"
                     print(text)
                     email.sendemail(text,subject)
-                    ts = open(lastsentfile, 'w')
+                    ts = open(config.lastsentfile, 'w')
                     ts.write(str(int(now)))
                     ts.close()
                 else:
