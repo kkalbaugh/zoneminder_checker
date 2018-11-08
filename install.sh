@@ -1,5 +1,6 @@
 #!/bin/bash
 {
+	apt-get install python3-pip
 	python3 -m pip install mysql-connector
 	python3 -m pip install smtplib
 	python3 -m pip install boto3
