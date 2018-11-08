@@ -55,13 +55,13 @@ def sendagain():
         logger.info("%s doesn't exist.  Need to create file" % config.lastsentfile)
         return 1
     else:
-        try:
-            with open(config.lastsentfile) as fp:
-                line = fp.readline()
-                lastEmailSent = int(line)
-                fp.close()
-        except:
-            logger.error("Unable to open %s" % config.lastsentfile)
+        fp = open(config.lastsentfile,"r")
+        line = fp.readline()
+        fp.close()
+        if line !="":
+            lastEmailSent = int(line)
+        else:
+            lastEmailSent = 0
         if lastEmailSent > alarmResendWaitTime:
             print("Already sent less than %s hours ago" % config.email_resend)
             logger.info("Already sent less than %s hours ago" % config.email_resend)
@@ -152,7 +152,7 @@ if __name__ == "__main__":
         try:
             if results == 0:
                 print("Status is OK")
-                ready = sendagain();				
+                ready = sendagain();
                 if ready > 2:
                     text = "Zoneminder Monitor(s) Are Working Again!"
                     subject = "Zoneminder - All Monitors Back Online"
