@@ -138,6 +138,7 @@ if __name__ == "__main__":
             ts = open(config.lastsentfile, 'w')
             ts.write("0")
             ts.close()
+			logger.info("Created Last Sent Tracking File (%s)" % config.lastsentfile)
         except:
             logger.error("Error creating %s" % config.lastsentfile,exc_info=True)
             email.sendemail("Last Sent Tracking File Doesn't Exist and Couldn't Be Created" ,"ZMChecker Error")
@@ -149,39 +150,38 @@ if __name__ == "__main__":
         except:
             logger.error("Couldn't Open Database")
 
-        try:
-            if results == 0:
-                print("Status is OK")
-                ready = sendagain();
-                if ready > 2:
-                    text = "Zoneminder Monitor(s) Are Working Again!"
-                    subject = "Zoneminder - All Monitors Back Online"
-                    print(text)
-                    email.sendemail(text,subject)
-                    ts = open(config.lastsentfile, 'w')
-                    ts.write("0")
-                    ts.close()
-                else:
-                    print("Not ready to send")
+		if results == 0:
+			print("Status is OK")
+			logger.debug("Status is OK")
+			ready = sendagain();
+			if ready > 2:
+				text = "Zoneminder Monitor(s) Are Working Again!"
+				subject = "Zoneminder - All Monitors Back Online"
+				print(text)
+				logger.info(text)
+				email.sendemail(text,subject)
+				ts = open(config.lastsentfile, 'w')
+				ts.write("0")
+				ts.close()
+			else:
+				print("Not ready to send")
+				logger.debug("Not ready to send")
 
-            else:
-                print("Status is NOT Ok")
-                logger.info("Status is NOT Ok")
-                ready = sendagain();
-                if ready == 1:
-                    text = "The following Zoneminder monitor(s) are not working.\n\n"
-                    text += monitor_list
-                    subject = "Zoneminder - Monitor Problem!"
-                    print(text)
-                    email.sendemail(text,subject)
-                    ts = open(config.lastsentfile, 'w')
-                    ts.write(str(int(now)))
-                    ts.close()
-                else:
-                    print("Not ready to send.  Sent Already")
-                    logger.info("Not ready to send.  Sent Already")
-
-        except Exception as e:
-            logger.error("Exception occurred", exc_info=True)
-
+		else:
+			print("Status is NOT Ok")
+			logger.info("Status is NOT Ok")
+			ready = sendagain();
+			if ready == 1:
+				text = "The following Zoneminder monitor(s) are not working.\n\n"
+				text += monitor_list
+				subject = "Zoneminder - Monitor Problem!"
+				print(text)
+				logger.info(text)
+				email.sendemail(text,subject)
+				ts = open(config.lastsentfile, 'w')
+				ts.write(str(int(now)))
+				ts.close()
+			else:
+				print("Not ready to send.  Sent Already")
+				logger.info("Not ready to send.  Sent Already")
     exit()
