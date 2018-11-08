@@ -19,7 +19,7 @@
 		echo "Creating lastseen directory";
 		mkdir /var/local/zm_checker/
 		touch /var/local/zm_checker/lastsent
-		chmod 755 /var/local/zm_checker/lastsent
+		chmod 777 /var/local/zm_checker/lastsent
 	fi
 		
 	chown root:root -R /usr/share/zm_checker
