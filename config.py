@@ -23,5 +23,7 @@ aws_region = "us-east-1"
 aws_access_key = ""
 aws_secret_key = ""
 
-# Logging Level
+# Logging
 logging_level = 'ERROR'
+logFile = '/var/log/zm/zm_checker.log'
+lastsentfile = '/var/local/zm_checker/lastsent'
