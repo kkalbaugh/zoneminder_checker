@@ -28,6 +28,15 @@ log_formatter = logging.Formatter('%(asctime)s %(levelname)s %(funcName)s(%(line
 ttd_handler = RotatingFileHandler(config.logFile, mode='a', maxBytes=5*1024*1024,backupCount=2, encoding=None, delay=0)
 ttd_handler.setFormatter(log_formatter)
 
+# define a Handler which writes INFO messages or higher to the sys.stderr
+console = logging.StreamHandler()
+console.setLevel(logging.DEBUG)
+# set a format which is simpler for console use
+formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+# tell the handler to use this format
+console.setFormatter(formatter)
+# add the handler to the root logger
+logger.addHandler(console)
 logger.addHandler(ttd_handler)
 
 try:
@@ -51,7 +60,6 @@ def utc_to_local(utc_dt):
 
 def sendagain():
     if not os.path.isfile(config.lastsentfile):
-        print("Need to create file")
         logger.info("%s doesn't exist.  Need to create file" % config.lastsentfile)
         return 1
     else:
@@ -63,17 +71,14 @@ def sendagain():
         else:
             lastEmailSent = 0
         if lastEmailSent > alarmResendWaitTime:
-            print("Already sent less than %s hours ago" % config.email_resend)
             logger.info("Already sent less than %s hours ago" % config.email_resend)
             lastsend_obj = datetime.fromtimestamp(int(line))
             lastsend_str = lastsend_obj.strftime("%Y-%m-%d %I:%M:%S %p")
             return lastEmailSent
         elif lastEmailSent == 0:
-            print("Zoneminder Wasn't In Alarm")
             logger.debug("Zoneminder Wasn't In Alarm")
             return 1
         else:
-            print("Ready to send again")
             logger.info("Ready to Send Again")
             return 1
 
@@ -97,13 +102,11 @@ def checkDatabase():
 
     result = cursor.fetchall()
     if not cursor.rowcount:
-        print("No monitors in alarm")
         logger.debug("No monitors in alarm")
         return 0
     else:
         for x in result:
             monitor_list += "Monitor #%s (%s) - Last Event Was %s\n\n" % (x[0],x[1],getLastEvent(x[0]))
-        print("Monitors listed in alarm:\n\n%s" % monitor_list)
         logger.info("Monitors listed in alarm: %s" % monitor_list)
         return 1
 
@@ -122,10 +125,8 @@ def getLastEvent(monitor):
         for (StartTime) in cursor:
             lastevent = datetime.strftime(StartTime[0], "%Y-%m-%d %I:%M:%S %p")
             logger.info("Last Event Found for %s was at %s" % (monitor, lastevent))
-            print(lastevent)
             return lastevent
     except:
-        print("No Prior Event Found")
         logger.info("No Prior Event Found for  %s" % monitor)
         return "No Prior Event Found"
 
@@ -151,37 +152,31 @@ if __name__ == "__main__":
             logger.error("Couldn't Open Database")
 
         if results == 0:
-            print("Status is OK")
             logger.debug("Status is OK")
             ready = sendagain();
             if ready > 2:
                 text = "Zoneminder Monitor(s) Are Working Again!"
                 subject = "Zoneminder - All Monitors Back Online"
-                print(text)
                 logger.info(text)
                 email.sendemail(text,subject)
                 ts = open(config.lastsentfile, 'w')
                 ts.write("0")
                 ts.close()
             else:
-                print("Not ready to send")
                 logger.debug("Not ready to send")
 
         else:
-            print("Status is NOT Ok")
             logger.info("Status is NOT Ok")
             ready = sendagain();
             if ready == 1:
                 text = "The following Zoneminder monitor(s) are not working.\n\n"
                 text += monitor_list
                 subject = "Zoneminder - Monitor Problem!"
-                print(text)
                 logger.info(text)
                 email.sendemail(text,subject)
                 ts = open(config.lastsentfile, 'w')
                 ts.write(str(int(now)))
                 ts.close()
             else:
-                print("Not ready to send.  Sent Already")
                 logger.info("Not ready to send.  Sent Already")
     exit()
