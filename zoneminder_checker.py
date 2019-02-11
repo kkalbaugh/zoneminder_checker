@@ -157,7 +157,7 @@ if __name__ == "__main__":
             if ready > 2:
                 text = "Zoneminder Monitor(s) Are Working Again!"
                 subject = "Zoneminder - All Monitors Back Online"
-                logger.info(text)
+                logger.info("Email Sent:\n" +text)
                 email.sendemail(text,subject)
                 ts = open(config.lastsentfile, 'w')
                 ts.write("0")
@@ -172,7 +172,7 @@ if __name__ == "__main__":
                 text = "The following Zoneminder monitor(s) are not working.\n\n"
                 text += monitor_list
                 subject = "Zoneminder - Monitor Problem!"
-                logger.info(text)
+                logger.info("Email Sent:\n" +text)
                 email.sendemail(text,subject)
                 ts = open(config.lastsentfile, 'w')
                 ts.write(str(int(now)))
