@@ -59,11 +59,11 @@ def checkGroups():
         Name = 'check'""")
     result = cursor.fetchall()
     if not cursor.rowcount:
-        cursor.execute("""INSERT INTO Groups ('Name') VALUES ('check')""")
+        cursor.execute("""INSERT INTO Groups (Name) VALUES ('check')""")
         mydb.commit()
         cursor.execute("""SELECT ID FROM Groups WHERE Name = 'check'""")
         for (ID) in cursor:
-            cursor.execute("""INSERT INTO Groups ('Name','ParentId') VALUES ('24',%s)""",ID)
+            cursor.execute("""INSERT INTO Groups (Name,ParentId) VALUES ('24',%s)""",ID)
             mydb.commit()
         cursor.execute("""SELECT ID FROM Groups WHERE Name = '24'""")
         for (ID) in cursor:
@@ -93,7 +93,7 @@ def addGroupMonitor():
     global monitor_list
     global groupID
     for x in monitor_list:
-        cursor.execute("""INSERT INTO Groups_Monitors ('GroupId','MonitorId') VALUES (%s,%s)""",(groupID,x))
+        cursor.execute("""INSERT INTO Groups_Monitors (GroupId,MonitorId) VALUES (%s,%s)""",(groupID,x))
         mydb.commit()
     logger.info("24 hour group added to Monitors : %s" % monitor_list)
 
