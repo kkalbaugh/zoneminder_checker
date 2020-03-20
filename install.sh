@@ -8,7 +8,7 @@
 	apt install python3-dev libpython3-dev
 	apt-get install python3-pip
 	apt install python3-mysqldb
-	pip install --upgrade pip
+	python3 -m pip install --upgrade pip
 	python3 -m pip install mysql-connector
 	python3 -m pip install smtplib
 	python3 -m pip install boto3
@@ -34,7 +34,7 @@
 	chown root:root -R /usr/share/zm_checker
 	chmod 755 -R /usr/share/zm_checker
 	cd /usr/share/zm_checker
-	python3 setup.py
+	python3 /usr/share/zm_checker/setup.py
 	echo '*/30 * * * * root /usr/bin/python3 /usr/share/zm_checker/zoneminder_checker.py &' > /etc/cron.d/zoneminder_checker
 	echo "Added zoneminder_checker.py to /etc/cron.d/zoneminder_checker"
 }
