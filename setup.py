@@ -84,6 +84,7 @@ def getMonitorList():
         for (x) in result:
             monitor_list.append(x[0])
         print("Monitor List : %s" % monitor_list)
+        return 1
 
 def addGroupMonitor():
     global cursor
