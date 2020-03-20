@@ -91,9 +91,13 @@ def addGroupMonitor():
         cursor.execute("""INSERT INTO Groups_Monitors ('GroupId','MonitorId') VALUES (%s,%s)""",(groupID,x))
         mydb.commit()
     logger.info("24 hour group added to Monitors : %s" % monitor_list)
+
 if __name__ == "__main__":
     monitors = getMonitorList()
     if monitors == 1:
+        print("24 hour group added to Monitors : %s" % monitor_list)
         groups = checkGroups()
         if groups == 1:
+            print("Groups Added")
+            addGroupMonitor()
             logger.info("24 hour group added to Monitors: %s" % monitor_list)
