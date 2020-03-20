@@ -7,12 +7,6 @@ import mysql.connector
 import MySQLdb.cursors
 import config
 
-# Check what email system to use
-if config.email_type == "aws":
-    import aws as email
-if config.email_type == "smtp":
-    import smtp as email
-
 try:
     logLevel = config.logLevel
 except:
