@@ -66,9 +66,9 @@ def checkGroups():
             cursor.execute("""INSERT INTO Groups (Name,ParentId) VALUES ('24',%s)""",ID)
             mydb.commit()
         cursor.execute("""SELECT ID FROM Groups WHERE Name = '24'""")
-        for (ID) in cursor:
-            groupID = ID
-        print("GroupID = %s",groupID)
+        result = cursor.fetchone()
+        groupID = result[0]
+        print("GroupID = {}".format(groupID))
         return 1
     else:
         return 0
@@ -93,7 +93,7 @@ def addGroupMonitor():
     global monitor_list
     global groupID
     for x in monitor_list:
-        print("Adding %s Group to Monitor %s",(groupID,x))
+        print("Adding {} Group to Monitor {}".format(groupID,x))
         cursor.execute("""INSERT INTO Groups_Monitors (GroupId,MonitorId) VALUES (%s,%s)""",(groupID,x))
         mydb.commit()
     logger.info("24 hour group added to Monitors : %s" % monitor_list)
@@ -101,9 +101,9 @@ def addGroupMonitor():
 if __name__ == "__main__":
     monitors = getMonitorList()
     if monitors == 1:
-        print("24 hour group added to Monitors : %s" % monitor_list)
+        print("24 hour group added to Monitors : {}".format(monitor_list))
         groups = checkGroups()
         if groups == 1:
             print("Groups Added")
             addGroupMonitor()
-            logger.info("24 hour group added to Monitors: %s" % monitor_list)
+
