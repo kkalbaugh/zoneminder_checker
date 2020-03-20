@@ -46,6 +46,7 @@ except Exception as e:
 cursor = mydb.cursor()
 monitor_list = []
 groupID = ''
+
 def checkGroups():
     global cursor
     global groupID
@@ -56,6 +57,7 @@ def checkGroups():
         Groups
     WHERE
         Name = 'check'""")
+    result = cursor.fetchall()
     if not cursor.rowcount:
         cursor.execute("""INSERT INTO Groups ('Name') VALUES ('check')""")
         mydb.commit()
@@ -94,7 +96,6 @@ def addGroupMonitor():
         cursor.execute("""INSERT INTO Groups_Monitors ('GroupId','MonitorId') VALUES (%s,%s)""",(groupID,x))
         mydb.commit()
     logger.info("24 hour group added to Monitors : %s" % monitor_list)
-    print("24 hour group added to Monitors : %s" % monitor_list)
 
 if __name__ == "__main__":
     monitors = getMonitorList()
