@@ -57,7 +57,7 @@ def checkGroups():
         Groups
     WHERE
         Name = 'check'""")
-    result = cursor.fetchall()
+    cursor.fetchall()
     if not cursor.rowcount:
         cursor.execute("""INSERT INTO Groups (Name) VALUES ('check')""")
         mydb.commit()
@@ -93,6 +93,7 @@ def addGroupMonitor():
     global monitor_list
     global groupID
     for x in monitor_list:
+        print("Adding %s Group to Monitor %s",(groupID,x))
         cursor.execute("""INSERT INTO Groups_Monitors (GroupId,MonitorId) VALUES (%s,%s)""",(groupID,x))
         mydb.commit()
     logger.info("24 hour group added to Monitors : %s" % monitor_list)
