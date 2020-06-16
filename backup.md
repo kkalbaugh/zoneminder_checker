@@ -1,0 +1,1 @@
+mysqldump -u root -p zm Config ControlPresets Controls Devices Filters Groups Groups_Monitors Manufacturers Models MonitorPresets Monitor_Status Monitors MontageLayouts Servers Users ZonePresets Zones > ZMBackup.sql
